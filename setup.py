@@ -99,13 +99,11 @@ def setup_docker(config):
     preprocessor_args["OS_NAME"] = "linux"
 
 
-# else:
-#     raise Exception(f"Unsupported OS: {oskind}")
-# # docker_exec(image_name, ["apt-get", "update"])
-# # docker_exec(image_name, ["apt-get", "install", "zsh"])
-
-
 def setup_local(config):
+    # TODO: make better
+    if config.linux is not None:
+        preprocessor_args["OS_NAME"] = "linux"
+
     preprocessor_args["OS_NAME"] = "macos"
 
 
@@ -119,6 +117,7 @@ def setup(config):
 def main():
     parser = argparse.ArgumentParser(prog="setup.py")
     parser.add_argument("--docker")
+    parser.add_argument("--linux")
     config = parser.parse_args(sys.argv[1:])
 
     setup(config)

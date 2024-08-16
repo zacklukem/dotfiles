@@ -1,3 +1,7 @@
+# @if true
+# WARNING: do not edit this document directly.  Edit in dotfiles and run setup.py
+# @endif
+
 export ZSH="$HOME/.oh-my-zsh"
 
 if [[ ! -d "$ZSH" ]]; then
@@ -45,5 +49,36 @@ if [ -d "$HOME/Library/pnpm" ]; then
     *":$PNPM_HOME:"*) ;;
     *) export PATH="$PNPM_HOME:$PATH" ;;
     esac
+fi
+# @endif
+
+function sourceme {
+    curr_dir=$(realpath "$PWD")
+    file_name=".zlm_sourceme.zsh"
+
+    found=no
+
+    while true; do
+        if [ -f "$curr_dir/$file_name" ]; then
+            echo -e "    \033[32m[source]\033[0m $curr_dir/$file_name"
+            export SOURCEME_ROOT="$curr_dir"
+            source "$curr_dir/$file_name"
+            found=yes
+        fi
+        if [ "$curr_dir" = "$HOME" ] || [ "$curr_dir" = "/" ]; then
+            break
+        fi
+        curr_dir=$(realpath "$curr_dir/..")
+    done
+
+    if [ "$found" = no ]; then
+        echo "No sourceme found"
+        return 1
+    fi
+}
+
+# @if OS_NAME == "macos"
+if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
+    echo -e "\033[33m --- Should you be using warp? --- \033[0m"
 fi
 # @endif
