@@ -100,11 +100,10 @@ def setup_docker(config):
 
 
 def setup_local(config):
-    # TODO: make better
-    if config.linux is not None:
-        preprocessor_args["OS_NAME"] = "linux"
-
-    preprocessor_args["OS_NAME"] = "macos"
+    if config.os is not None:
+        preprocessor_args["OS_NAME"] = config.os
+    else:
+        preprocessor_args["OS_NAME"] = "macos"
 
 
 def setup(config):
@@ -117,7 +116,8 @@ def setup(config):
 def main():
     parser = argparse.ArgumentParser(prog="setup.py")
     parser.add_argument("--docker")
-    parser.add_argument("--linux")
+    parser.add_argument("--os", type=str, choices=["linux", "macos"])
+    parser.add_argument("--home", type=str)
     config = parser.parse_args(sys.argv[1:])
 
     setup(config)
@@ -127,9 +127,13 @@ def main():
 
     for source, dest in files["files"].items():
         if config.docker is not None:
-            dest = dest.replace("~", "./temp")
+            home = "./temp"
+        elif config.home is not None:
+            home = config.home
         else:
-            dest = dest.replace("~", os.getenv("HOME"))
+            home = os.getenv("HOME")
+
+        dest = dest.replace("~", home)
         with open(source, "r") as src, open(dest, "w") as dst:
             Preprocessor(src, dst).run()
 
