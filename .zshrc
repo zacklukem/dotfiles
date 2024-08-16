@@ -1,4 +1,4 @@
-# @if true
+# @if True
 # WARNING: do not edit this document directly.  Edit in dotfiles and run setup.py
 # @endif
 
